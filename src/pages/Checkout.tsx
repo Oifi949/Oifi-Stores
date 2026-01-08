@@ -93,7 +93,7 @@ const Checkout: React.FC = () => {
           <button
             onClick={() => navigate('/cart')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors self-start ${
-              theme === 'dark' ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+              theme === 'dark' ? 'text-gray-600 hover:text-gray-950 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
             }`}
           >
             <FiArrowLeft size={20} />
@@ -128,11 +128,19 @@ const Checkout: React.FC = () => {
           <div className="lg:col-span-2">
             {step === 1 && (
               <div className={`p-10 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-                <h2 className="text-2xl font-bold mb-6">Shipping Information</h2>
+                <h2 className={`text-2xl font-bold mb-6 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>Shipping Information</h2>
                 <form className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-lg font-medium mb-2">First Name</label>
+                      <label className={`block text-lg font-medium mb-2 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>First Name</label>
                       <input
                         type="text"
                         name="firstName"
@@ -147,7 +155,11 @@ const Checkout: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-lg font-medium mb-2">Last Name</label>
+                      <label className={`block text-lg font-medium mb-2 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>Last Name</label>
                       <input
                         type="text"
                         name="lastName"
@@ -163,7 +175,11 @@ const Checkout: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-lg font-medium mb-2">Email</label>
+                    <label className={`block text-lg font-medium mb-2 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>Email</label>
                     <input
                       type="email"
                       name="email"
@@ -178,7 +194,11 @@ const Checkout: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-lg font-medium mb-2">Address</label>
+                    <label className={`block text-lg font-medium mb-2 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>Address</label>
                     <input
                       type="text"
                       name="address"
@@ -194,7 +214,11 @@ const Checkout: React.FC = () => {
                   </div>
                   <div className="grid md:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-lg font-medium mb-2">City</label>
+                      <label className={`block text-lg font-medium mb-2 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>City</label>
                       <input
                         type="text"
                         name="city"
@@ -209,7 +233,11 @@ const Checkout: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-lg font-medium mb-2">ZIP Code</label>
+                      <label className={`block text-lg font-medium mb-2 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>ZIP Code</label>
                       <input
                         type="text"
                         name="zipCode"
@@ -224,7 +252,11 @@ const Checkout: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-lg font-medium mb-2">Country</label>
+                      <label className={`block text-lg font-medium mb-2 ${
+                          theme === 'dark'
+                            ? 'text-white'
+                            : 'text-black'
+                        }`}>Country</label>
                       <input
                         type="text"
                         name="country"
@@ -245,10 +277,10 @@ const Checkout: React.FC = () => {
 
             {step === 2 && (
               <div className={`p-10 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-                <h2 className="text-2xl font-bold mb-6">Payment Information</h2>
+                <h2 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Payment Information</h2>
                 <form className="space-y-6">
                   <div>
-                    <label className="block text-lg font-medium mb-2">Name on Card</label>
+                    <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Name on Card</label>
                     <input
                       type="text"
                       name="nameOnCard"
@@ -263,7 +295,7 @@ const Checkout: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-lg font-medium mb-2">Card Number</label>
+                    <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Card Number</label>
                     <input
                       type="text"
                       name="cardNumber"
@@ -280,7 +312,7 @@ const Checkout: React.FC = () => {
                   </div>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-lg font-medium mb-2">Expiry Date</label>
+                      <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Expiry Date</label>
                       <input
                         type="text"
                         name="expiryDate"
@@ -296,7 +328,7 @@ const Checkout: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-lg font-medium mb-2">CVV</label>
+                      <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>CVV</label>
                       <input
                         type="text"
                         name="cvv"
@@ -317,7 +349,7 @@ const Checkout: React.FC = () => {
             )}
 
             {step === 3 && (
-              <div className={`p-10 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+              <div className={`p-10 rounded-lg ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'} shadow-lg`}>
                 <h2 className="text-2xl font-bold mb-6">Review Your Order</h2>
                 <div className="space-y-6">
                   <div>
@@ -349,21 +381,21 @@ const Checkout: React.FC = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className={`p-8 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg sticky top-6`}>
-              <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+              <h3 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Order Summary</h3>
               {items.map((item) => (
-                <div key={item.id} className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
+                <div key={item.id} className={`flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                   <span className="text-lg">{item.title} x {item.quantity}</span>
                   <span className="text-lg font-medium">${(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
-              <div className="flex justify-between items-center py-4 text-xl font-bold">
+              <div className={`flex justify-between items-center py-4 text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                 <span>Total</span>
                 <span>${(total + total * 0.08).toFixed(2)}</span>
               </div>
               {step < 3 ? (
                 <button
                   onClick={nextStep}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg text-lg font-medium transition-colors"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
                 >
                   Continue
                 </button>
@@ -375,7 +407,7 @@ const Checkout: React.FC = () => {
                     isLoading
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-500 hover:bg-green-600'
-                  } text-white`}
+                  } text-black`}
                 >
                   {isLoading ? 'Processing...' : 'Place Order'}
                 </button>
@@ -384,7 +416,7 @@ const Checkout: React.FC = () => {
                 <button
                   onClick={prevStep}
                   className={`w-full mt-4 py-4 rounded-lg text-lg font-medium transition-colors ${
-                    theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+                    theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-black' : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
                   }`}
                 >
                   Back

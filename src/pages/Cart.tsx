@@ -114,7 +114,7 @@ const Cart: React.FC = () => {
                   <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>₦{(state.total * 0.08).toLocaleString()}</span>
                 </div>
                 <hr className="my-4" />
-                <div className="flex justify-between text-lg font-bold">
+                <div className={`flex justify-between text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   <span>Total</span>
                   <span>₦{(state.total + state.total * 0.08).toLocaleString()}</span>
                 </div>
@@ -122,7 +122,7 @@ const Cart: React.FC = () => {
 
               <Link
                 to="/checkout"
-                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors block text-center"
+                className={`w-full bg-indigo-600 py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 mt-3 transition-colors block text-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
               >
                 Proceed to Checkout
               </Link>

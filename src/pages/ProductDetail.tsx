@@ -35,7 +35,7 @@ export default function ProductDetail() {
                 className="w-full rounded-2xl shadow-lg object-cover h-64 md:h-80 lg:h-96"
               />
               <div className="grid grid-cols-4 gap-2 md:gap-4">
-                {/* Additional product images could go here */}
+               <img src="" alt="" />
               </div>
             </div>
 
@@ -57,10 +57,10 @@ export default function ProductDetail() {
                 <button
                   onClick={handleAddToCart}
                   disabled={addedToCart}
-                  className={`w-full flex items-center justify-center gap-3 py-3 md:py-4 px-6 rounded-xl font-semibold text-base md:text-lg transition-all duration-300 ${
+                  className={`w-full flex items-center justify-center gap-3 py-3 md:py-4 px-6 rounded-xl font-semibold text-base md:text-lg transition-all  duration-300 ${
                     addedToCart
-                      ? 'bg-green-600 text-white'
-                      : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl'
+                      ? 'bg-green-600'
+                      : 'bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-xl'
                   }`}
                 >
                   {addedToCart ? (

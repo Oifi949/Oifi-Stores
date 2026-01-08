@@ -90,15 +90,15 @@ const Footer: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <FiMail size={20} />
-                <span className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>support@ecommerce.com</span>
+                <span className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>owolabifeolami@gmail.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <FiPhone size={20} />
-                <span className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>+1 (555) 123-4567</span>
+                <span className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>+234 907 198 1627</span>
               </div>
               <div className="flex items-center space-x-3">
                 <FiMapPin size={20} />
-                <span className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>123 Commerce St, City, State</span>
+                <span className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>123 Commerce St, City, Nig</span>
               </div>
             </div>
             {/* Theme Toggle */}
@@ -107,7 +107,7 @@ const Footer: React.FC = () => {
                 onClick={toggleTheme}
                 className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
                   theme === 'dark'
-                    ? 'bg-gray-800 text-white hover:bg-gray-700'
+                    ? 'bg-gray-800 text-gray-950 hover:bg-gray-700'
                     : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
                 }`}
               >
