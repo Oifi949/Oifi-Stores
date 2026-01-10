@@ -102,7 +102,6 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-               "User-Agent": "Mozilla/5.0",
             },
             body: JSON.stringify({ amount: ConvertToSubcurrency(amount) }),
           }
