@@ -98,7 +98,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     const createPaymentIntent = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/create-payment-intent`,
+          `api/create-payment-intent`,
           {
             method: "POST",
             headers: {
