@@ -1,8 +1,23 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useTheme } from '../context/ThemeContext';
-import { FiCreditCard, FiTruck, FiCheckCircle, FiArrowLeft } from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { useTheme } from "../context/ThemeContext";
+import {
+  FiCreditCard,
+  FiTruck,
+  FiCheckCircle,
+  FiArrowLeft,
+} from "react-icons/fi";
+import {
+  useStripe,
+  useElements,
+  PaymentElement,
+  CardElement,
+  Elements,
+} from "@stripe/react-stripe-js";
+import ConvertToSubcurrency from "../lib/ConvertToSubcurrency";
+import { loadStripe } from "@stripe/stripe-js";
+import PaymentForm from "./PaymentForm";
 
 interface ShippingInfo {
   firstName: string;
@@ -21,30 +36,87 @@ interface PaymentInfo {
   nameOnCard: string;
 }
 
-const Checkout: React.FC = () => {
+interface CheckoutProps {
+  amount: number;
+}
+
+const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLIC_KEY);
+
+const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+
+  const [errorMessage, seterrorMessage] = useState<string>();
+  const [clientSecret, setClientSecret] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const { state, dispatch } = useCart();
   const { theme } = useTheme();
   const navigate = useNavigate();
 
   const { items, total } = state;
 
+  const handleStripeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) return;
+
+    setLoading(true);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/order-confirmation`,
+      },
+    });
+
+    if (error) {
+      seterrorMessage(error.message);
+      setLoading(false);
+    }
+  };
+
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    address: '',
-    city: '',
-    zipCode: '',
-    country: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    country: "",
   });
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    nameOnCard: '',
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    nameOnCard: "",
   });
+
+  useEffect(() => {
+    const createPaymentIntent = async () => {
+      try {
+        const res = await fetch(
+          import.meta.env.VITE_BACKEND_URL + "/api/create-payment-intent",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ amount: ConvertToSubcurrency(amount) }),
+          }
+        );
+        const data = (await res.json()) as { clientSecret: string };
+
+        setClientSecret(data.clientSecret);
+      } catch (err) {
+        console.error("Error creating payment intent:", err);
+      }
+    };
+
+    createPaymentIntent();
+  }, [amount]);
 
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
@@ -61,21 +133,75 @@ const Checkout: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const orderId = Math.random().toString(36).substr(2, 9).toUpperCase();
-    dispatch({ type: 'CLEAR_CART' });
+    dispatch({ type: "CLEAR_CART" });
     navigate(`/order-confirmation?orderId=${orderId}`);
   };
 
+  const handlePaymentSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setLoading(true);
+
+    if (!stripe || !elements) {
+      setLoading(false);
+      return;
+    }
+
+    const { error: submitError } = await elements.submit();
+    if (submitError) {
+      seterrorMessage(submitError.message);
+      setLoading(false);
+      return;
+    }
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      clientSecret,
+      confirmParams: {
+        return_url: `http://localhost:5173/payment-success?amount=${amount}`,
+      },
+    });
+    if (error) {
+      seterrorMessage(error.message);
+      setLoading(false);
+    }
+  };
+
+  if (!clientSecret || !stripe || !elements) {
+    return (
+      <div className="flex items-center justify-center">
+        <div
+          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+          role="status"
+        >
+          <span className="!absolute !-m-px !h-px !w-px !overlow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)">
+            Loading....
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   if (items.length === 0) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <div
+        className={`min-h-screen flex items-center justify-center ${
+          theme === "dark"
+            ? "bg-gray-900 text-white"
+            : "bg-gray-50 text-gray-900"
+        }`}
+      >
         <div className="text-center">
           <h2 className="text-3xl font-bold mb-4">Your cart is empty</h2>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className={`px-6 py-3 rounded-lg text-lg font-medium transition-colors ${
-              theme === 'dark' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white'
+              theme === "dark"
+                ? "bg-blue-600 hover:bg-blue-700 text-white"
+                : "bg-blue-500 hover:bg-blue-600 text-white"
             }`}
           >
             Continue Shopping
@@ -91,9 +217,11 @@ const Checkout: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
           <button
-            onClick={() => navigate('/cart')}
+            onClick={() => navigate("/cart")}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors self-start ${
-              theme === 'dark' ? 'text-gray-600 hover:text-gray-950 hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+              theme === "dark"
+                ? "text-gray-600 hover:text-gray-950 hover:bg-gray-800"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-200"
             }`}
           >
             <FiArrowLeft size={20} />
@@ -106,17 +234,57 @@ const Checkout: React.FC = () => {
         {/* Progress Steps */}
         <div className="flex justify-center mb-12">
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
-            <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-blue-500' : theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
+            <div
+              className={`flex items-center space-x-2 ${
+                step >= 1
+                  ? "text-blue-500"
+                  : theme === "dark"
+                  ? "text-gray-500"
+                  : "text-gray-400"
+              }`}
+            >
               <FiTruck size={24} />
               <span className="text-lg font-medium">Shipping</span>
             </div>
-            <div className={`w-1 h-16 sm:w-16 sm:h-1 ${step >= 2 ? 'bg-blue-500' : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
-            <div className={`flex items-center space-x-2 ${step >= 2 ? 'text-blue-500' : theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
+            <div
+              className={`w-1 h-16 sm:w-16 sm:h-1 ${
+                step >= 2
+                  ? "bg-blue-500"
+                  : theme === "dark"
+                  ? "bg-gray-600"
+                  : "bg-gray-300"
+              }`}
+            ></div>
+            <div
+              className={`flex items-center space-x-2 ${
+                step >= 2
+                  ? "text-blue-500"
+                  : theme === "dark"
+                  ? "text-gray-500"
+                  : "text-gray-400"
+              }`}
+            >
               <FiCreditCard size={24} />
               <span className="text-lg font-medium">Payment</span>
             </div>
-            <div className={`w-1 h-16 sm:w-16 sm:h-1 ${step >= 3 ? 'bg-blue-500' : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
-            <div className={`flex items-center space-x-2 ${step >= 3 ? 'text-blue-500' : theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
+            <div
+              className={`w-1 h-16 sm:w-16 sm:h-1 ${
+                step >= 3
+                  ? "bg-blue-500"
+                  : theme === "dark"
+                  ? "bg-gray-600"
+                  : "bg-gray-300"
+              }`}
+            ></div>
+            <div
+              className={`flex items-center space-x-2 ${
+                step >= 3
+                  ? "text-blue-500"
+                  : theme === "dark"
+                  ? "text-gray-500"
+                  : "text-gray-400"
+              }`}
+            >
               <FiCheckCircle size={24} />
               <span className="text-lg font-medium">Review</span>
             </div>
@@ -127,145 +295,165 @@ const Checkout: React.FC = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {step === 1 && (
-              <div className={`p-10 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-                <h2 className={`text-2xl font-bold mb-6 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>Shipping Information</h2>
+              <div
+                className={`p-10 rounded-lg ${
+                  theme === "dark" ? "bg-gray-800" : "bg-white"
+                } shadow-lg`}
+              >
+                <h2
+                  className={`text-2xl font-bold mb-6 ${
+                    theme === "dark" ? "text-white" : "text-black"
+                  }`}
+                >
+                  Shipping Information
+                </h2>
                 <form className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className={`block text-lg font-medium mb-2 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>First Name</label>
+                      <label
+                        className={`block text-lg font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        First Name
+                      </label>
                       <input
                         type="text"
                         name="firstName"
                         value={shippingInfo.firstName}
                         onChange={handleShippingChange}
                         className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          theme === "dark"
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         required
                       />
                     </div>
                     <div>
-                      <label className={`block text-lg font-medium mb-2 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>Last Name</label>
+                      <label
+                        className={`block text-lg font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        Last Name
+                      </label>
                       <input
                         type="text"
                         name="lastName"
                         value={shippingInfo.lastName}
                         onChange={handleShippingChange}
                         className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          theme === "dark"
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         required
                       />
                     </div>
                   </div>
                   <div>
-                    <label className={`block text-lg font-medium mb-2 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>Email</label>
+                    <label
+                      className={`block text-lg font-medium mb-2 ${
+                        theme === "dark" ? "text-white" : "text-black"
+                      }`}
+                    >
+                      Email
+                    </label>
                     <input
                       type="email"
                       name="email"
                       value={shippingInfo.email}
                       onChange={handleShippingChange}
                       className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                        theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        theme === "dark"
+                          ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                       } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                       required
                     />
                   </div>
                   <div>
-                    <label className={`block text-lg font-medium mb-2 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>Address</label>
+                    <label
+                      className={`block text-lg font-medium mb-2 ${
+                        theme === "dark" ? "text-white" : "text-black"
+                      }`}
+                    >
+                      Address
+                    </label>
                     <input
                       type="text"
                       name="address"
                       value={shippingInfo.address}
                       onChange={handleShippingChange}
                       className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                        theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        theme === "dark"
+                          ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                       } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                       required
                     />
                   </div>
                   <div className="grid md:grid-cols-3 gap-6">
                     <div>
-                      <label className={`block text-lg font-medium mb-2 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>City</label>
+                      <label
+                        className={`block text-lg font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        City
+                      </label>
                       <input
                         type="text"
                         name="city"
                         value={shippingInfo.city}
                         onChange={handleShippingChange}
                         className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          theme === "dark"
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         required
                       />
                     </div>
                     <div>
-                      <label className={`block text-lg font-medium mb-2 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>ZIP Code</label>
+                      <label
+                        className={`block text-lg font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        ZIP Code
+                      </label>
                       <input
                         type="text"
                         name="zipCode"
                         value={shippingInfo.zipCode}
                         onChange={handleShippingChange}
                         className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          theme === "dark"
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         required
                       />
                     </div>
                     <div>
-                      <label className={`block text-lg font-medium mb-2 ${
-                          theme === 'dark'
-                            ? 'text-white'
-                            : 'text-black'
-                        }`}>Country</label>
+                      <label
+                        className={`block text-lg font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        Country
+                      </label>
                       <input
                         type="text"
                         name="country"
                         value={shippingInfo.country}
                         onChange={handleShippingChange}
                         className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          theme === "dark"
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         required
                       />
@@ -276,100 +464,163 @@ const Checkout: React.FC = () => {
             )}
 
             {step === 2 && (
-              <div className={`p-10 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
-                <h2 className={`text-2xl font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Payment Information</h2>
-                <form className="space-y-6">
-                  <div>
-                    <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Name on Card</label>
-                    <input
-                      type="text"
-                      name="nameOnCard"
-                      value={paymentInfo.nameOnCard}
-                      onChange={handlePaymentChange}
-                      className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                        theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Card Number</label>
-                    <input
-                      type="text"
-                      name="cardNumber"
-                      value={paymentInfo.cardNumber}
-                      onChange={handlePaymentChange}
-                      placeholder="1234 5678 9012 3456"
-                      className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                        theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                      required
-                    />
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-6">
+              <div className="">
+                {/* <div
+                  className={`p-10 rounded-lg ${
+                    theme === "dark" ? "bg-gray-800" : "bg-white"
+                  } shadow-lg`}
+                >
+                  <h2
+                    className={`text-2xl font-bold mb-6 ${
+                      theme === "dark" ? "text-white" : "text-black"
+                    }`}
+                  >
+                    Payment Information
+                  </h2>
+                  <form className="space-y-6">
                     <div>
-                      <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Expiry Date</label>
+                      <label
+                        className={`block text-lg font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        Name on Card
+                      </label>
                       <input
                         type="text"
-                        name="expiryDate"
-                        value={paymentInfo.expiryDate}
+                        name="nameOnCard"
+                        value={paymentInfo.nameOnCard}
                         onChange={handlePaymentChange}
-                        placeholder="MM/YY"
                         className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          theme === "dark"
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         required
                       />
                     </div>
                     <div>
-                      <label className={`block text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>CVV</label>
+                      <label
+                        className={`block text-lg font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-black"
+                        }`}
+                      >
+                        Card Number
+                      </label>
                       <input
                         type="text"
-                        name="cvv"
-                        value={paymentInfo.cvv}
+                        name="cardNumber"
+                        value={paymentInfo.cardNumber}
                         onChange={handlePaymentChange}
-                        placeholder="123"
+                        placeholder="1234 5678 9012 3456"
                         className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          theme === "dark"
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
                         } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         required
                       />
                     </div>
-                  </div>
-                </form>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label
+                          className={`block text-lg font-medium mb-2 ${
+                            theme === "dark" ? "text-white" : "text-black"
+                          }`}
+                        >
+                          Expiry Date
+                        </label>
+                        <input
+                          type="text"
+                          name="expiryDate"
+                          value={paymentInfo.expiryDate}
+                          onChange={handlePaymentChange}
+                          placeholder="MM/YY"
+                          className={`w-full px-4 py-3 rounded-lg text-lg border ${
+                            theme === "dark"
+                              ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                              : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                          } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className={`block text-lg font-medium mb-2 ${
+                            theme === "dark" ? "text-white" : "text-black"
+                          }`}
+                        >
+                          CVV
+                        </label>
+                        <input
+                          type="text"
+                          name="cvv"
+                          value={paymentInfo.cvv}
+                          onChange={handlePaymentChange}
+                          placeholder="123"
+                          className={`w-full px-4 py-3 rounded-lg text-lg border ${
+                            theme === "dark"
+                              ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                              : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                          } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div> */}
+                <Elements stripe={stripePromise} options={{ clientSecret }}>
+                  <PaymentForm clientSecret={clientSecret} amount={amount} />
+                </Elements>
               </div>
             )}
 
             {step === 3 && (
-              <div className={`p-10 rounded-lg ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'} shadow-lg`}>
+              <div
+                className={`p-10 rounded-lg ${
+                  theme === "dark"
+                    ? "bg-gray-800 text-white"
+                    : "bg-white text-black"
+                } shadow-lg`}
+              >
                 <h2 className="text-2xl font-bold mb-6">Review Your Order</h2>
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-xl font-semibold mb-4">Shipping Information</h3>
-                    <p className="text-lg">{shippingInfo.firstName} {shippingInfo.lastName}</p>
+                    <h3 className="text-xl font-semibold mb-4">
+                      Shipping Information
+                    </h3>
+                    <p className="text-lg">
+                      {shippingInfo.firstName} {shippingInfo.lastName}
+                    </p>
                     <p className="text-lg">{shippingInfo.email}</p>
                     <p className="text-lg">{shippingInfo.address}</p>
-                    <p className="text-lg">{shippingInfo.city}, {shippingInfo.zipCode}, {shippingInfo.country}</p>
+                    <p className="text-lg">
+                      {shippingInfo.city}, {shippingInfo.zipCode},{" "}
+                      {shippingInfo.country}
+                    </p>
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-4">Payment Information</h3>
-                    <p className="text-lg">**** **** **** {paymentInfo.cardNumber.slice(-4)}</p>
+                    <h3 className="text-xl font-semibold mb-4">
+                      Payment Information
+                    </h3>
+                    <p className="text-lg">
+                      **** **** **** {paymentInfo.cardNumber.slice(-4)}
+                    </p>
                     <p className="text-lg">{paymentInfo.nameOnCard}</p>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-4">Order Items</h3>
                     {items.map((item) => (
-                      <div key={item.id} className="flex justify-between items-center py-2">
-                        <span className="text-lg">{item.title} x {item.quantity}</span>
-                        <span className="text-lg font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                      <div
+                        key={item.id}
+                        className="flex justify-between items-center py-2"
+                      >
+                        <span className="text-lg">
+                          {item.title} x {item.quantity}
+                        </span>
+                        <span className="text-lg font-medium">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -380,15 +631,38 @@ const Checkout: React.FC = () => {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className={`p-8 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg sticky top-6`}>
-              <h3 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Order Summary</h3>
+            <div
+              className={`p-8 rounded-lg ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              } shadow-lg sticky top-6`}
+            >
+              <h3
+                className={`text-xl font-bold mb-4 ${
+                  theme === "dark" ? "text-white" : "text-black"
+                }`}
+              >
+                Order Summary
+              </h3>
               {items.map((item) => (
-                <div key={item.id} className={`flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                  <span className="text-lg">{item.title} x {item.quantity}</span>
-                  <span className="text-lg font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                <div
+                  key={item.id}
+                  className={`flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700 ${
+                    theme === "dark" ? "text-white" : "text-black"
+                  }`}
+                >
+                  <span className="text-lg">
+                    {item.title} x {item.quantity}
+                  </span>
+                  <span className="text-lg font-medium">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </span>
                 </div>
               ))}
-              <div className={`flex justify-between items-center py-4 text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+              <div
+                className={`flex justify-between items-center py-4 text-xl font-bold ${
+                  theme === "dark" ? "text-white" : "text-black"
+                }`}
+              >
                 <span>Total</span>
                 <span>${(total + total * 0.08).toFixed(2)}</span>
               </div>
@@ -405,18 +679,20 @@ const Checkout: React.FC = () => {
                   disabled={isLoading}
                   className={`w-full py-4 rounded-lg text-lg font-medium transition-colors ${
                     isLoading
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-green-500 hover:bg-green-600'
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-green-500 hover:bg-green-600"
                   } text-black`}
                 >
-                  {isLoading ? 'Processing...' : 'Place Order'}
+                  {isLoading ? "Processing..." : "Place Order"}
                 </button>
               )}
               {step > 1 && (
                 <button
                   onClick={prevStep}
                   className={`w-full mt-4 py-4 rounded-lg text-lg font-medium transition-colors ${
-                    theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600 text-black' : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+                    theme === "dark"
+                      ? "bg-gray-700 hover:bg-gray-600 text-black"
+                      : "bg-gray-200 hover:bg-gray-300 text-gray-900"
                   }`}
                 >
                   Back

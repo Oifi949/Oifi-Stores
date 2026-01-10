@@ -8,4 +8,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  "server":{
+    "allowedHosts": ["interlabial-joline-undesigningly.ngrok-free.dev"]
+  }
 })
