@@ -43,7 +43,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
               <div className="space-y-4 md:space-y-6">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-500 leading-tight">
-                   quality products
+                  Discover quality products
                 </h1>
                 <p
                   className={`text-base md:text-lg lg:text-xl leading-relaxed ${
