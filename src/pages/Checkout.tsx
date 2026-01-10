@@ -108,6 +108,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
         );
         const data = await res.json();
         setClientSecret(data.clientSecret);
+        console.log(import.meta.env.VITE_BACKEND_URL);
       } catch (err) {
         console.error("Error creating payment intent:", err);
       }
