@@ -6,7 +6,7 @@ interface PaymentFormProps {
   amount: number;
 }
 
-const PaymentForm: React.FC<PaymentFormProps> = ({ clientSecret, amount }) => {
+const PaymentForm: React.FC<PaymentFormProps> = ({ amount }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
