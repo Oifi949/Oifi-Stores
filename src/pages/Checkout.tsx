@@ -11,8 +11,7 @@ import {
 import {
   useStripe,
   useElements,
-  PaymentElement,
-  CardElement,
+  // PaymentElement,
   Elements,
 } from "@stripe/react-stripe-js";
 import ConvertToSubcurrency from "../lib/ConvertToSubcurrency";
@@ -46,9 +45,9 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [errorMessage, seterrorMessage] = useState<string>();
+  // const [errorMessage, seterrorMessage] = useState<string>();
   const [clientSecret, setClientSecret] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const { state, dispatch } = useCart();
   const { theme } = useTheme();
@@ -56,25 +55,25 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
 
   const { items, total } = state;
 
-  const handleStripeSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleStripeSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
 
-    if (!stripe || !elements) return;
+  //   if (!stripe || !elements) return;
 
-    setLoading(true);
+  //   setLoading(true);
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/order-confirmation`,
-      },
-    });
+  //   const { error } = await stripe.confirmPayment({
+  //     elements,
+  //     confirmParams: {
+  //       return_url: `${window.location.origin}/order-confirmation`,
+  //     },
+  //   });
 
-    if (error) {
-      seterrorMessage(error.message);
-      setLoading(false);
-    }
-  };
+  //   if (error) {
+  //     seterrorMessage(error.message);
+  //     setLoading(false);
+  //   }
+  // };
 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +86,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     zipCode: "",
     country: "",
   });
-  const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>({
+  const [ paymentInfo ] = useState<PaymentInfo>({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
@@ -122,9 +121,9 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
   };
 
-  const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPaymentInfo({ ...paymentInfo, [e.target.name]: e.target.value });
-  };
+  // const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPaymentInfo({ ...paymentInfo, [e.target.name]: e.target.value });
+  // };
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
@@ -139,36 +138,36 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     navigate(`/order-confirmation?orderId=${orderId}`);
   };
 
-  const handlePaymentSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    setLoading(true);
+  // const handlePaymentSubmit = async (
+  //   event: React.FormEvent<HTMLFormElement>
+  // ) => {
+  //   event.preventDefault();
+  //   setLoading(true);
 
-    if (!stripe || !elements) {
-      setLoading(false);
-      return;
-    }
+  //   if (!stripe || !elements) {
+  //     setLoading(false);
+  //     return;
+  //   }
 
-    const { error: submitError } = await elements.submit();
-    if (submitError) {
-      seterrorMessage(submitError.message);
-      setLoading(false);
-      return;
-    }
+  //   const { error: submitError } = await elements.submit();
+  //   if (submitError) {
+  //     seterrorMessage(submitError.message);
+  //     setLoading(false);
+  //     return;
+  //   }
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: `http://localhost:5173/payment-success?amount=${amount}`,
-      },
-    });
-    if (error) {
-      seterrorMessage(error.message);
-      setLoading(false);
-    }
-  };
+  //   const { error } = await stripe.confirmPayment({
+  //     elements,
+  //     clientSecret,
+  //     confirmParams: {
+  //       return_url: `http://localhost:5173/payment-success?amount=${amount}`,
+  //     },
+  //   });
+  //   if (error) {
+  //     seterrorMessage(error.message);
+  //     setLoading(false);
+  //   }
+  // };
 
   if (!clientSecret || !stripe || !elements) {
     return (
@@ -177,7 +176,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
           role="status"
         >
-          <span className="!absolute !-m-px !h-px !w-px !overlow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)">
+          <span className="absolute! -m-px! h-px! w-px! !overlow-hidden whitespace-nowrap! border-0! p-0! ![clip:rect(0,0,0,0)">
             Loading....
           </span>
         </div>
