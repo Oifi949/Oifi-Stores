@@ -26,7 +26,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount }) => {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/payment-success?amount=${amount}`,
+        return_url: `${window.location.origin}/payment-success=${amount}`,
       },
     });
 
