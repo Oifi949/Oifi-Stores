@@ -86,7 +86,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     zipCode: "",
     country: "",
   });
-  const [paymentInfo] = useState<PaymentInfo>({
+  const [ paymentInfo ] = useState<PaymentInfo>({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
@@ -94,11 +94,10 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
   });
 
   useEffect(() => {
-    console.log(import.meta.env.VITE_BACKEND_URL);
     const createPaymentIntent = async () => {
       try {
         const res = await fetch(
-          `api/create-payment-intent`,
+          import.meta.env.VITE_BACKEND_URL + "/api/create-payment-intent",
           {
             method: "POST",
             headers: {
@@ -107,7 +106,8 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
             body: JSON.stringify({ amount: ConvertToSubcurrency(amount) }),
           }
         );
-        const data = await res.json();
+        const data = (await res.json()) as { clientSecret: string };
+
         setClientSecret(data.clientSecret);
       } catch (err) {
         console.error("Error creating payment intent:", err);
