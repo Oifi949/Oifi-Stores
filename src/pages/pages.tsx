@@ -1,4 +1,4 @@
-import CheckoutPage from "./Checkout";
+// import CheckoutPage from "./Checkout";
 import ConvertToSubcurrency from "../lib/ConvertToSubcurrency";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
@@ -21,7 +21,7 @@ export default function pages() {
           currency: "usd",
         }}
       >
-        <CheckoutPage amount={amount} />
+        {/* <CheckoutPage amount={amount} /> */}
       </Elements>
     </div>
   );

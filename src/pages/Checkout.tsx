@@ -15,7 +15,7 @@ import PaymentForm from "./PaymentForm";
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLIC_KEY);
 
 const Checkout = () => {
-  const amount = 500
+  const amount = 1000
   const stripe = useStripe();
   const elements = useElements();
   const [clientSecret, setClientSecret] = useState("");
