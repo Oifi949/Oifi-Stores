@@ -9,29 +9,28 @@ export default function Orders() {
   const amount = searchParams.get("amount") || "N/A";
 
   const statusSteps = ["Order Confirmed", "Processing", "Shipped", "Delivered"];
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep] = useState(0);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [showConfetti] = useState(false);
   const [truckAnimation, setTruckAnimation] = useState(false);
   const [dustFade, setDustFade] = useState(false);
 
   useEffect(() => {
-    if (currentStep < statusSteps.length - 1) {
-      const timer = setTimeout(() => {
-        setCurrentStep((prev) => prev + 1);
-      }, 3000);
-      return () => clearTimeout(timer);
-    } else if (currentStep === statusSteps.length - 1) {
-      setShowConfetti(true);
-
-      // Trigger truck animation when bar hits 100%
-      setTimeout(() => setTruckAnimation(true), 1000);
+    if (currentStep === statusSteps.length - 1) {
+      // After box slides in, trigger truck drive-off
+      const truckTimer = setTimeout(() => {
+        setTruckAnimation(true);
+      }, 2000); // wait for box animation
 
       // Fade dust after truck leaves
-      setTimeout(() => setDustFade(true), 5000);
+      const dustTimer = setTimeout(() => {
+        setDustFade(true);
+      }, 5000);
 
-      const stopConfetti = setTimeout(() => setShowConfetti(false), 5000);
-      return () => clearTimeout(stopConfetti);
+      return () => {
+        clearTimeout(truckTimer);
+        clearTimeout(dustTimer);
+      };
     }
   }, [currentStep]);
 
@@ -105,7 +104,9 @@ export default function Orders() {
           <div className="mt-6 flex flex-col items-center">
             <div className="truck-scene">
               <div
-                className={`truck-container ${truckAnimation ? "drive-off" : ""}`}
+                className={`truck-container ${
+                  truckAnimation ? "drive-off" : ""
+                }`}
               >
                 <div className="box">📦</div>
                 <div className="truck">🚚</div>
