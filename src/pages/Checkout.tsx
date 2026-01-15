@@ -84,7 +84,7 @@ const Checkout = () => {
   if (items.length === 0) {
     return (
       <div
-        className={`min-h-screen flex items-center justify-center ${
+        className={`min-h-screen px-4 flex items-center justify-center ${
           theme === "dark"
             ? "bg-gray-900 text-white"
             : "bg-gray-50 text-gray-900"
@@ -169,7 +169,7 @@ const Checkout = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div
                 className={`flex justify-between px-8 items-center py-4 text-xl font-bold ${
                   theme === "dark" ? "text-white" : "text-black"
@@ -178,38 +178,40 @@ const Checkout = () => {
                 <span>Total</span>
                 <span>${(total + total * 0.08).toFixed(2)}</span>
               </div>
-              {step < 3 ? (
-                <button
-                  onClick={nextStep}
-                  className="w-full bg-blue-500 mx-8 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
-                >
-                  Continue
-                </button>
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  className={`w-full py-4 rounded-lg text-lg font-medium transition-colors ${
-                    isLoading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-green-500 hover:bg-green-600"
-                  } text-black`}
-                >
-                  {isLoading ? "Processing..." : "Place Order"}
-                </button>
-              )}
-              {step > 1 && (
-                <button
-                  onClick={prevStep}
-                  className={`w-full mt-4 py-4 rounded-lg text-lg font-medium transition-colors ${
-                    theme === "dark"
-                      ? "bg-gray-700 hover:bg-gray-600 text-black"
-                      : "bg-gray-200 hover:bg-gray-300 text-gray-900"
-                  }`}
-                >
-                  Back
-                </button>
-              )}
+              <div className="px-8">
+                {step < 3 ? (
+                  <button
+                    onClick={nextStep}
+                    className="w-full bg-blue-500 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
+                  >
+                    Continue
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className={`w-full py-4 rounded-lg text-lg font-medium transition-colors ${
+                      isLoading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600"
+                    } text-black`}
+                  >
+                    {isLoading ? "Processing..." : "Place Order"}
+                  </button>
+                )}
+                {step > 1 && (
+                  <button
+                    onClick={prevStep}
+                    className={`w-full mt-4 py-4 rounded-lg text-lg font-medium transition-colors ${
+                      theme === "dark"
+                        ? "bg-gray-700 hover:bg-gray-600 text-black"
+                        : "bg-gray-200 hover:bg-gray-300 text-gray-900"
+                    }`}
+                  >
+                    Back
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
