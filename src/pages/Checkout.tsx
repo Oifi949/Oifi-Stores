@@ -156,7 +156,7 @@ const Checkout = () => {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className={`flex justify-between text-start items-center py-2 border-b border-gray-200 dark:border-gray-700 ${
+                    className={`flex justify-between px-8 text-start items-center py-2 border-b border-gray-200 dark:border-gray-700 ${
                       theme === "dark" ? "text-white" : "text-black"
                     }`}
                   >
@@ -181,7 +181,7 @@ const Checkout = () => {
               {step < 3 ? (
                 <button
                   onClick={nextStep}
-                  className="w-full bg-blue-500 px-8 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
+                  className="w-full bg-blue-500 mx-8 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
                 >
                   Continue
                 </button>
