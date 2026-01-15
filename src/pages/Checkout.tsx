@@ -2,35 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
-import {
-  FiArrowLeft,
-} from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
 import {
   useStripe,
   useElements,
-  // PaymentElement,
   Elements,
 } from "@stripe/react-stripe-js";
 import ConvertToSubcurrency from "../lib/ConvertToSubcurrency";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./PaymentForm";
-
-// interface ShippingInfo {
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   address: string;
-//   city: string;
-//   zipCode: string;
-//   country: string;
-// }
-
-// interface PaymentInfo {
-//   cardNumber: string;
-//   expiryDate: string;
-//   cvv: string;
-//   nameOnCard: string;
-// }
 
 interface CheckoutProps {
   amount: number;
@@ -41,54 +21,15 @@ const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLIC_KEY);
 const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
   const stripe = useStripe();
   const elements = useElements();
-
-  // const [errorMessage, seterrorMessage] = useState<string>();
   const [clientSecret, setClientSecret] = useState("");
-  // const [loading, setLoading] = useState(false);
 
   const { state, dispatch } = useCart();
   const { theme } = useTheme();
   const navigate = useNavigate();
 
   const { items, total } = state;
-
-  // const handleStripeSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (!stripe || !elements) return;
-
-  //   setLoading(true);
-
-  //   const { error } = await stripe.confirmPayment({
-  //     elements,
-  //     confirmParams: {
-  //       return_url: `${window.location.origin}/order-confirmation`,
-  //     },
-  //   });
-
-  //   if (error) {
-  //     seterrorMessage(error.message);
-  //     setLoading(false);
-  //   }
-  // };
-
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  // const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
-  //   firstName: "",
-  //   lastName: "",
-  //   email: "",
-  //   address: "",
-  //   city: "",
-  //   zipCode: "",
-  //   country: "",
-  // });
-  // const [paymentInfo] = useState<PaymentInfo>({
-  //   cardNumber: "",
-  //   expiryDate: "",
-  //   cvv: "",
-  //   nameOnCard: "",
-  // });
 
   useEffect(() => {
     const createPaymentIntent = async () => {
@@ -99,7 +40,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
       console.log(import.meta.env.VITE_BACKEND_URL);
       console.log("url");
       console.log(url);
-      
+
       try {
         const res = await fetch(url, {
           method: "POST",
@@ -119,14 +60,6 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     createPaymentIntent();
   }, [amount]);
 
-  // const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
-  // };
-
-  // const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPaymentInfo({ ...paymentInfo, [e.target.name]: e.target.value });
-  // };
-
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
@@ -139,37 +72,6 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     dispatch({ type: "CLEAR_CART" });
     navigate(`/order-confirmation?orderId=${orderId}`);
   };
-
-  // const handlePaymentSubmit = async (
-  //   event: React.FormEvent<HTMLFormElement>
-  // ) => {
-  //   event.preventDefault();
-  //   setLoading(true);
-
-  //   if (!stripe || !elements) {
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   const { error: submitError } = await elements.submit();
-  //   if (submitError) {
-  //     seterrorMessage(submitError.message);
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   const { error } = await stripe.confirmPayment({
-  //     elements,
-  //     clientSecret,
-  //     confirmParams: {
-  //       return_url: `http://localhost:5173/payment-success?amount=${amount}`,
-  //     },
-  //   });
-  //   if (error) {
-  //     seterrorMessage(error.message);
-  //     setLoading(false);
-  //   }
-  // };
 
   if (!clientSecret || !stripe || !elements) {
     return (
@@ -232,76 +134,14 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
           <div></div>
         </div>
 
-        {/* Progress Steps */}
-        {/* <div className="flex justify-center mb-12">
-          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
-            <div
-              className={`flex items-center space-x-2 ${
-                step >= 1
-                  ? "text-blue-500"
-                  : theme === "dark"
-                  ? "text-gray-500"
-                  : "text-gray-400"
-              }`}
-            >
-              <FiTruck size={24} />
-              <span className="text-lg font-medium">Shipping</span>
-            </div>
-            <div
-              className={`w-1 h-16 sm:w-16 sm:h-1 ${
-                step >= 2
-                  ? "bg-blue-500"
-                  : theme === "dark"
-                  ? "bg-gray-600"
-                  : "bg-gray-300"
-              }`}
-            ></div>
-            <div
-              className={`flex items-center space-x-2 ${
-                step >= 2
-                  ? "text-blue-500"
-                  : theme === "dark"
-                  ? "text-gray-500"
-                  : "text-gray-400"
-              }`}
-            >
-              <FiCreditCard size={24} />
-              <span className="text-lg font-medium">Payment</span>
-            </div>
-            <div
-              className={`w-1 h-16 sm:w-16 sm:h-1 ${
-                step >= 3
-                  ? "bg-blue-500"
-                  : theme === "dark"
-                  ? "bg-gray-600"
-                  : "bg-gray-300"
-              }`}
-            ></div>
-            <div
-              className={`flex items-center space-x-2 ${
-                step >= 3
-                  ? "text-blue-500"
-                  : theme === "dark"
-                  ? "text-gray-500"
-                  : "text-gray-400"
-              }`}
-            >
-              <FiCheckCircle size={24} />
-              <span className="text-lg font-medium">Review</span>
-            </div>
-          </div>
-        </div> */}
-
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            {step === 1 && (
-              <div className="">
-                <Elements stripe={stripePromise} options={{ clientSecret }}>
-                  <PaymentForm clientSecret={clientSecret} amount={amount} />
-                </Elements>
-              </div>
-            )}
+            <div className="">
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <PaymentForm clientSecret={clientSecret} amount={amount} />
+              </Elements>
+            </div>
           </div>
 
           {/* Sidebar */}
