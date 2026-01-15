@@ -21,7 +21,7 @@ export default function pages() {
           currency: "usd",
         }}
       >
-        {/* <CheckoutPage amount={amount} /> */}
+        <CheckoutPage amount={amount} />
       </Elements>
     </div>
   );
