@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
+import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 interface PaymentFormProps {
   clientSecret: string;
@@ -9,6 +11,9 @@ interface PaymentFormProps {
 const PaymentForm: React.FC<PaymentFormProps> = ({ amount }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const { dispatch } = useCart();
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -23,16 +28,26 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount }) => {
     setLoading(true);
     setErrorMessage(null);
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/payment-success?amount=${amount}`,
-      },
+      redirect: "if_required", // prevents auto-redirect, lets you handle success manually
     });
 
     if (error) {
       setErrorMessage(error.message || "An unexpected error occurred.");
       setLoading(false);
+    } else if (paymentIntent && paymentIntent.status === "succeeded") {
+      // ✅ Clear cart from localStorage
+      localStorage.removeItem("cart");
+
+      // ✅ Reset cart state in context
+      dispatch({ type: "CLEAR_CART" });
+
+      // ✅ Generate orderId
+      const orderId = Math.floor(Math.random() * 1000000);
+
+      // ✅ Navigate to success page
+      navigate(`/payment-success?amount=${amount}&orderId=${orderId}`);
     }
   };
 
@@ -50,7 +65,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount }) => {
       <button
         type="submit"
         disabled={!stripe || loading}
-        className="w-full py-3 bg-black text-black rounded-lg font-bold disabled:opacity-50"
+        className="w-full py-3 bg-green-500 text-white rounded-lg font-bold disabled:opacity-50"
       >
         {!loading ? `Pay $${amount}` : "Processing..."}
       </button>
