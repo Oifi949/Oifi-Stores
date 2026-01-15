@@ -217,7 +217,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white py-16">
-      <div className="px-4">
+      <div className="">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
           <button
@@ -236,7 +236,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
         </div>
 
         {/* Progress Steps */}
-        <div className="flex justify-center mb-12">
+        {/* <div className="flex justify-center mb-12">
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
             <div
               className={`flex items-center space-x-2 ${
@@ -293,238 +293,16 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
               <span className="text-lg font-medium">Review</span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16">
           {/* Main Content */}
           <div className="lg:col-span-2">
             {step === 1 && (
-              <div
-                className={`p-10 rounded-lg ${
-                  theme === "dark" ? "bg-gray-800" : "bg-white"
-                } shadow-lg`}
-              >
-                <h2
-                  className={`text-2xl font-bold mb-6 ${
-                    theme === "dark" ? "text-white" : "text-black"
-                  }`}
-                >
-                  Shipping Information
-                </h2>
-                <form className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        className={`block text-lg font-medium mb-2 ${
-                          theme === "dark" ? "text-white" : "text-black"
-                        }`}
-                      >
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={shippingInfo.firstName}
-                        onChange={handleShippingChange}
-                        className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === "dark"
-                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className={`block text-lg font-medium mb-2 ${
-                          theme === "dark" ? "text-white" : "text-black"
-                        }`}
-                      >
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={shippingInfo.lastName}
-                        onChange={handleShippingChange}
-                        className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === "dark"
-                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      className={`block text-lg font-medium mb-2 ${
-                        theme === "dark" ? "text-white" : "text-black"
-                      }`}
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={shippingInfo.email}
-                      onChange={handleShippingChange}
-                      className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                        theme === "dark"
-                          ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className={`block text-lg font-medium mb-2 ${
-                        theme === "dark" ? "text-white" : "text-black"
-                      }`}
-                    >
-                      Address
-                    </label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={shippingInfo.address}
-                      onChange={handleShippingChange}
-                      className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                        theme === "dark"
-                          ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                          : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                      } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                      required
-                    />
-                  </div>
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div>
-                      <label
-                        className={`block text-lg font-medium mb-2 ${
-                          theme === "dark" ? "text-white" : "text-black"
-                        }`}
-                      >
-                        City
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={shippingInfo.city}
-                        onChange={handleShippingChange}
-                        className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === "dark"
-                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className={`block text-lg font-medium mb-2 ${
-                          theme === "dark" ? "text-white" : "text-black"
-                        }`}
-                      >
-                        ZIP Code
-                      </label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        value={shippingInfo.zipCode}
-                        onChange={handleShippingChange}
-                        className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === "dark"
-                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className={`block text-lg font-medium mb-2 ${
-                          theme === "dark" ? "text-white" : "text-black"
-                        }`}
-                      >
-                        Country
-                      </label>
-                      <input
-                        type="text"
-                        name="country"
-                        value={shippingInfo.country}
-                        onChange={handleShippingChange}
-                        className={`w-full px-4 py-3 rounded-lg text-lg border ${
-                          theme === "dark"
-                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                        } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                        required
-                      />
-                    </div>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {step === 2 && (
               <div className="">
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
                   <PaymentForm clientSecret={clientSecret} amount={amount} />
                 </Elements>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div
-                className={`p-10 rounded-lg ${
-                  theme === "dark"
-                    ? "bg-gray-800 text-white"
-                    : "bg-white text-black"
-                } shadow-lg`}
-              >
-                <h2 className="text-2xl font-bold mb-6">Review Your Order</h2>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">
-                      Shipping Information
-                    </h3>
-                    <p className="text-lg">
-                      {shippingInfo.firstName} {shippingInfo.lastName}
-                    </p>
-                    <p className="text-lg">{shippingInfo.email}</p>
-                    <p className="text-lg">{shippingInfo.address}</p>
-                    <p className="text-lg">
-                      {shippingInfo.city}, {shippingInfo.zipCode},{" "}
-                      {shippingInfo.country}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">
-                      Payment Information
-                    </h3>
-                    <p className="text-lg">
-                      **** **** **** {paymentInfo.cardNumber.slice(-4)}
-                    </p>
-                    <p className="text-lg">{paymentInfo.nameOnCard}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Order Items</h3>
-                    {items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex justify-between items-center py-2"
-                      >
-                        <span className="text-lg">
-                          {item.title} x {item.quantity}
-                        </span>
-                        <span className="text-lg font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
           </div>
