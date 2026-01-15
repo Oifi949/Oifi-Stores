@@ -144,7 +144,7 @@ const Checkout = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div
-              className={`p-8 rounded-lg ${
+              className={`p-8 rounded-lg max-h-50 overflow-y-auto  ${
                 theme === "dark" ? "bg-gray-800" : "bg-white"
               } shadow-lg sticky top-6`}
             >
