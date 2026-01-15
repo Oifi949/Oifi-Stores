@@ -13,7 +13,6 @@ export default function Orders() {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // ⏱ Automatically advance every 3 seconds (demo mode)
   useEffect(() => {
     if (currentStep < statusSteps.length - 1) {
       const timer = setTimeout(() => {
@@ -21,14 +20,12 @@ export default function Orders() {
       }, 3000);
       return () => clearTimeout(timer);
     } else if (currentStep === statusSteps.length - 1) {
-      // 🎉 Trigger confetti once when delivered
       setShowConfetti(true);
       const stopConfetti = setTimeout(() => setShowConfetti(false), 5000);
       return () => clearTimeout(stopConfetti);
     }
   }, [currentStep]);
 
-  // Track window size for confetti
   useEffect(() => {
     const updateSize = () =>
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -39,7 +36,6 @@ export default function Orders() {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50 px-4 relative">
-      {/* 🎉 Confetti bursts once when delivered */}
       {showConfetti && (
         <Confetti
           width={windowSize.width}
@@ -53,7 +49,6 @@ export default function Orders() {
           Track Your Order
         </h1>
 
-        {/* Order Details */}
         <div className="mt-6 text-center">
           <p className="text-gray-600 text-lg">
             Order{" "}
@@ -65,7 +60,6 @@ export default function Orders() {
           </p>
         </div>
 
-        {/* Progress Bar */}
         <div className="mt-8">
           <div className="flex justify-between mb-2">
             {statusSteps.map((step, index) => (
@@ -89,7 +83,6 @@ export default function Orders() {
           </div>
         </div>
 
-        {/* Current Status */}
         <p className="mt-6 text-center text-gray-600">
           Current Status:{" "}
           <span className="font-semibold text-green-600">
@@ -97,7 +90,6 @@ export default function Orders() {
           </span>
         </p>
 
-        {/* 🎉 Truck + Box animation when delivered */}
         {currentStep === statusSteps.length - 1 && (
           <div className="mt-6 flex flex-col items-center">
             <div className="truck-scene">
@@ -110,7 +102,6 @@ export default function Orders() {
           </div>
         )}
 
-        {/* Back Button */}
         <button
           onClick={() => (window.location.href = "/")}
           className="mt-8 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors w-full"

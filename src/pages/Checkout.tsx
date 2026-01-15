@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
@@ -15,14 +15,11 @@ const Checkout = () => {
   const elements = useElements();
   const [clientSecret, setClientSecret] = useState("");
 
-  const { state, dispatch } = useCart();
+  const { state } = useCart();
   const { theme } = useTheme();
   const { items, total } = state;
   const amount = parseFloat((total + total * 0.08).toFixed(2));
   const navigate = useNavigate();
-
-  const [step, setStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const createPaymentIntent = async () => {
@@ -52,19 +49,6 @@ const Checkout = () => {
 
     createPaymentIntent();
   }, [amount]);
-
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    const orderId = Math.random().toString(36).substr(2, 9).toUpperCase();
-    dispatch({ type: "CLEAR_CART" });
-    navigate(`/order-confirmation?orderId=${orderId}`);
-  };
 
   if (!clientSecret || !stripe || !elements) {
     return (
@@ -177,40 +161,6 @@ const Checkout = () => {
               >
                 <span>Total</span>
                 <span>${(total + total * 0.08).toFixed(2)}</span>
-              </div>
-              <div className="px-8">
-                {step < 3 ? (
-                  <button
-                    onClick={nextStep}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
-                  >
-                    Continue
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleSubmit}
-                    disabled={isLoading}
-                    className={`w-full py-4 rounded-lg text-lg font-medium transition-colors ${
-                      isLoading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-green-500 hover:bg-green-600"
-                    } text-black`}
-                  >
-                    {isLoading ? "Processing..." : "Place Order"}
-                  </button>
-                )}
-                {step > 1 && (
-                  <button
-                    onClick={prevStep}
-                    className={`w-full mt-4 py-4 rounded-lg text-lg font-medium transition-colors ${
-                      theme === "dark"
-                        ? "bg-gray-700 hover:bg-gray-600 text-black"
-                        : "bg-gray-200 hover:bg-gray-300 text-gray-900"
-                    }`}
-                  >
-                    Back
-                  </button>
-                )}
               </div>
             </div>
           </div>
