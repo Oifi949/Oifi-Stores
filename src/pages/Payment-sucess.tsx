@@ -94,7 +94,7 @@ export default function Orders() {
           <div className="mt-6 flex flex-col items-center">
             <div className="truck-scene">
               <div className="box"></div>
-              <div className="truck">🚚</div>
+              <div className="truck rotate-x-180">🚚</div>
             </div>
             <p className="mt-4 text-xl font-bold text-green-600 animate-bounce">
               Delivered 🎉 Thank you for shopping with us!
