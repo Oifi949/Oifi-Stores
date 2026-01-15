@@ -23,7 +23,7 @@ function App() {
             stripe={StripePromise}
             options={{
               mode: "payment",
-              amount: ConvertToSubcurrency(500), //cents
+              amount: ConvertToSubcurrency(600), //cents
               currency: "usd",
             }}
           >
