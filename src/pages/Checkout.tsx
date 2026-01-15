@@ -11,16 +11,16 @@ import PaymentForm from "./PaymentForm";
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLIC_KEY);
 
 const Checkout = () => {
-  const amount = 1000;
   const stripe = useStripe();
   const elements = useElements();
   const [clientSecret, setClientSecret] = useState("");
 
   const { state, dispatch } = useCart();
   const { theme } = useTheme();
+  const { items, total } = state;
+  const amount = parseFloat((total + total * 0.08).toFixed(2));
   const navigate = useNavigate();
 
-  const { items, total } = state;
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
