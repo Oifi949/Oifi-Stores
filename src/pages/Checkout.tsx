@@ -140,12 +140,12 @@ const Checkout = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div
-              className={`p-8 rounded-lg ${
+              className={`py-8 rounded-lg ${
                 theme === "dark" ? "bg-gray-800" : "bg-white"
               } shadow-lg sticky top-6`}
             >
               <h3
-                className={`text-xl font-bold mb-4 ${
+                className={`text-xl font-bold px-8 mb-4 ${
                   theme === "dark" ? "text-white" : "text-black"
                 }`}
               >
@@ -156,7 +156,7 @@ const Checkout = () => {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className={`flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700 ${
+                    className={`flex justify-between text-start items-center py-2 border-b border-gray-200 dark:border-gray-700 ${
                       theme === "dark" ? "text-white" : "text-black"
                     }`}
                   >
@@ -171,7 +171,7 @@ const Checkout = () => {
               </div>
               
               <div
-                className={`flex justify-between items-center py-4 text-xl font-bold ${
+                className={`flex justify-between px-8 items-center py-4 text-xl font-bold ${
                   theme === "dark" ? "text-white" : "text-black"
                 }`}
               >
@@ -181,7 +181,7 @@ const Checkout = () => {
               {step < 3 ? (
                 <button
                   onClick={nextStep}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
+                  className="w-full bg-blue-500 px-8 hover:bg-blue-600 text-black py-4 rounded-lg text-lg font-medium transition-colors"
                 >
                   Continue
                 </button>
