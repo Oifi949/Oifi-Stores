@@ -104,7 +104,7 @@ export default function Orders() {
 
         <button
           onClick={() => (window.location.href = "/")}
-          className="mt-8 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors w-full"
+          className="mt-8 bg-green-500 hover:bg-green-600 text-black font-semibold py-3 px-6 rounded-lg transition-colors w-full"
         >
           Back to Home
         </button>
