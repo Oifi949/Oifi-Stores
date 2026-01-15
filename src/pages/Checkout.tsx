@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
 import { FiArrowLeft } from "react-icons/fi";
-import {
-  useStripe,
-  useElements,
-  Elements,
-} from "@stripe/react-stripe-js";
+import { useStripe, useElements, Elements } from "@stripe/react-stripe-js";
 import ConvertToSubcurrency from "../lib/ConvertToSubcurrency";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./PaymentForm";
@@ -15,7 +11,7 @@ import PaymentForm from "./PaymentForm";
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLIC_KEY);
 
 const Checkout = () => {
-  const amount = 1000
+  const amount = 1000;
   const stripe = useStripe();
   const elements = useElements();
   const [clientSecret, setClientSecret] = useState("");
@@ -144,7 +140,7 @@ const Checkout = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div
-              className={`p-8 rounded-lg max-h-50 overflow-y-auto  ${
+              className={`p-8 rounded-lg ${
                 theme === "dark" ? "bg-gray-800" : "bg-white"
               } shadow-lg sticky top-6`}
             >
@@ -155,21 +151,25 @@ const Checkout = () => {
               >
                 Order Summary
               </h3>
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className={`flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700 ${
-                    theme === "dark" ? "text-white" : "text-black"
-                  }`}
-                >
-                  <span className="text-lg">
-                    {item.title} x {item.quantity}
-                  </span>
-                  <span className="text-lg font-medium">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
-                </div>
-              ))}
+
+              <div className="max-h-50 overflow-y-auto">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700 ${
+                      theme === "dark" ? "text-white" : "text-black"
+                    }`}
+                  >
+                    <span className="text-lg">
+                      {item.title} x {item.quantity}
+                    </span>
+                    <span className="text-lg font-medium">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              
               <div
                 className={`flex justify-between items-center py-4 text-xl font-bold ${
                   theme === "dark" ? "text-white" : "text-black"
