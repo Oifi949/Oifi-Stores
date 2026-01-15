@@ -12,6 +12,8 @@ export default function Orders() {
   const [currentStep, setCurrentStep] = useState(0);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
+  const [truckAnimation, setTruckAnimation] = useState(false);
+  const [dustFade, setDustFade] = useState(false);
 
   useEffect(() => {
     if (currentStep < statusSteps.length - 1) {
@@ -21,6 +23,13 @@ export default function Orders() {
       return () => clearTimeout(timer);
     } else if (currentStep === statusSteps.length - 1) {
       setShowConfetti(true);
+
+      // Trigger truck animation when bar hits 100%
+      setTimeout(() => setTruckAnimation(true), 1000);
+
+      // Fade dust after truck leaves
+      setTimeout(() => setDustFade(true), 5000);
+
       const stopConfetti = setTimeout(() => setShowConfetti(false), 5000);
       return () => clearTimeout(stopConfetti);
     }
@@ -60,6 +69,7 @@ export default function Orders() {
           </p>
         </div>
 
+        {/* Progress bar */}
         <div className="mt-8">
           <div className="flex justify-between mb-2">
             {statusSteps.map((step, index) => (
@@ -90,12 +100,19 @@ export default function Orders() {
           </span>
         </p>
 
+        {/* Truck + Box animation */}
         {currentStep === statusSteps.length - 1 && (
           <div className="mt-6 flex flex-col items-center">
             <div className="truck-scene">
-              <div className="box">📦</div>
-              <div className="truck">🚚</div>
+              <div
+                className={`truck-container ${truckAnimation ? "drive-off" : ""}`}
+              >
+                <div className="box">📦</div>
+                <div className="truck">🚚</div>
+              </div>
+              <div className={`dust ${dustFade ? "fade-dust" : ""}`}>💨</div>
             </div>
+
             <p className="mt-4 text-xl font-bold text-green-600 animate-bounce">
               Delivered 🎉 Thank you for shopping with us!
             </p>
