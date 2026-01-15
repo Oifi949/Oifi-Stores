@@ -12,13 +12,10 @@ import ConvertToSubcurrency from "../lib/ConvertToSubcurrency";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./PaymentForm";
 
-interface CheckoutProps {
-  amount: number;
-}
-
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLIC_KEY);
 
-const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
+const Checkout = () => {
+  const amount = 500
   const stripe = useStripe();
   const elements = useElements();
   const [clientSecret, setClientSecret] = useState("");
