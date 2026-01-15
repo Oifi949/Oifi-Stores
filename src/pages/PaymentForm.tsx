@@ -65,7 +65,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ amount }) => {
       <button
         type="submit"
         disabled={!stripe || loading}
-        className="w-full py-3 bg-green-500 text-white rounded-lg font-bold disabled:opacity-50"
+        className="w-full py-3 bg-green-500 rounded-lg font-bold disabled:opacity-50"
       >
         {!loading ? `Pay $${amount}` : "Processing..."}
       </button>
