@@ -156,7 +156,7 @@ const Checkout = () => {
 
               <div
                 className={`flex justify-between px-8 items-center py-4 text-xl font-bold ${
-                  theme === "dark" ? "text-white" : "text-black"
+                  theme === "dark" ? "text-black" : "text-black"
                 }`}
               >
                 <span>Total</span>
