@@ -3,9 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
 import {
-  FiCreditCard,
-  FiTruck,
-  FiCheckCircle,
   FiArrowLeft,
 } from "react-icons/fi";
 import {
@@ -18,22 +15,22 @@ import ConvertToSubcurrency from "../lib/ConvertToSubcurrency";
 import { loadStripe } from "@stripe/stripe-js";
 import PaymentForm from "./PaymentForm";
 
-interface ShippingInfo {
-  firstName: string;
-  lastName: string;
-  email: string;
-  address: string;
-  city: string;
-  zipCode: string;
-  country: string;
-}
+// interface ShippingInfo {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   address: string;
+//   city: string;
+//   zipCode: string;
+//   country: string;
+// }
 
-interface PaymentInfo {
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  nameOnCard: string;
-}
+// interface PaymentInfo {
+//   cardNumber: string;
+//   expiryDate: string;
+//   cvv: string;
+//   nameOnCard: string;
+// }
 
 interface CheckoutProps {
   amount: number;
@@ -77,21 +74,21 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    country: "",
-  });
-  const [paymentInfo] = useState<PaymentInfo>({
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    nameOnCard: "",
-  });
+  // const [shippingInfo, setShippingInfo] = useState<ShippingInfo>({
+  //   firstName: "",
+  //   lastName: "",
+  //   email: "",
+  //   address: "",
+  //   city: "",
+  //   zipCode: "",
+  //   country: "",
+  // });
+  // const [paymentInfo] = useState<PaymentInfo>({
+  //   cardNumber: "",
+  //   expiryDate: "",
+  //   cvv: "",
+  //   nameOnCard: "",
+  // });
 
   useEffect(() => {
     const createPaymentIntent = async () => {
@@ -122,9 +119,9 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
     createPaymentIntent();
   }, [amount]);
 
-  const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
-  };
+  // const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
+  // };
 
   // const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   setPaymentInfo({ ...paymentInfo, [e.target.name]: e.target.value });
