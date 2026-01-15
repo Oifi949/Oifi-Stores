@@ -57,7 +57,7 @@
   top: 40px;
   width: 40px;
   height: 40px;
-  background: #fbbf24; /* amber box */
+  /* background: #fbbf24; amber box */
   border-radius: 4px;
   animation: loadBox 1.5s forwards;
 }
