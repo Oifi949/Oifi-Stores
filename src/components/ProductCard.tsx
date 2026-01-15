@@ -1,4 +1,3 @@
-// src/components/ProductCard.tsx
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";

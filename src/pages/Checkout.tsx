@@ -217,7 +217,7 @@ const Checkout: React.FC<CheckoutProps> = ({ amount }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white py-16 px-6">
-      <div className="max-w-screen-2xl mx-auto px-4">
+      <div className="px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
           <button

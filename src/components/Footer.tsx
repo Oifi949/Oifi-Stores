@@ -11,7 +11,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 
 const Footer: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <footer
@@ -215,7 +215,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
             {/* Theme Toggle */}
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <button
                 onClick={toggleTheme}
                 className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
@@ -228,7 +228,7 @@ const Footer: React.FC = () => {
                   ? "Switch to Light Mode"
                   : "Switch to Dark Mode"}
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 

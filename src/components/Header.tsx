@@ -5,7 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 
 export default function Header() {
   const { state } = useCart();
-  const { theme, toggleTheme } = useTheme();
+  const { theme  } = useTheme();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const itemCount = state.items.reduce(
@@ -128,7 +128,7 @@ export default function Header() {
             </button>
 
             {/* Theme toggle */}
-            <button
+            {/* <button
               onClick={toggleTheme}
               className={`p-2 rounded-lg transition-colors ${
                 theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"
@@ -164,7 +164,7 @@ export default function Header() {
                   />
                 </svg>
               )}
-            </button>
+            </button> */}
 
             {/* Cart */}
             <Link to="/cart" className="relative group">
